@@ -555,3 +555,371 @@ Chuyển các Business Goals và phạm vi MVP đã xác định ở B3, B4 thà
 - Nếu **chấp nhận** → Phân công tài xế.
 - Nếu **từ chối / không phản hồi** → Hệ thống tiếp tục tìm tài xế khác.
 - Nếu **không còn tài xế phù hợp** → Thông báo cho Customer.
+
+# B9. Xác định Use Case Detail – Tự động tìm tài xế
+
+## UC01 – Tự động tìm tài xế
+
+- **Actor chính:** Customer
+- **Actor liên quan:** Driver
+- **Mục tiêu:** Tìm và phân công một tài xế phù hợp cho yêu cầu đặt xe.
+
+### Điều kiện bắt đầu
+
+- Customer đã đăng nhập.
+- Customer đã nhập điểm đón và điểm đến.
+- Customer đã gửi yêu cầu đặt xe.
+
+### Luồng chính
+
+1. Customer gửi yêu cầu đặt xe.
+2. Hệ thống tiếp nhận yêu cầu.
+3. Hệ thống xác định các tài xế đang sẵn sàng.
+4. Hệ thống kiểm tra vị trí của các tài xế.
+5. Hệ thống lựa chọn tài xế phù hợp và gần Customer.
+6. Hệ thống gửi yêu cầu chuyến đến Driver.
+7. Driver chấp nhận chuyến.
+8. Hệ thống xác nhận và phân công chuyến cho Driver.
+9. Hệ thống thông báo cho Customer về tài xế đã nhận chuyến.
+
+### Luồng thay thế
+
+**Trường hợp Driver từ chối:**
+
+1. Driver từ chối yêu cầu.
+2. Hệ thống loại Driver khỏi yêu cầu hiện tại.
+3. Hệ thống tiếp tục tìm Driver khác.
+4. Hệ thống gửi yêu cầu đến Driver tiếp theo.
+
+**Trường hợp Driver không phản hồi:**
+
+1. Driver không phản hồi yêu cầu.
+2. Hệ thống tiếp tục tìm Driver khác.
+3. Customer không cần tạo lại yêu cầu đặt xe.
+
+**Trường hợp không tìm được Driver:**
+
+1. Hệ thống không tìm thấy Driver phù hợp.
+2. Hệ thống thông báo cho Customer.
+3. Yêu cầu đặt xe kết thúc.
+
+### Kết quả
+
+- **Thành công:** Yêu cầu đặt xe được phân công cho một Driver phù hợp.
+- **Thất bại:** Không tìm được Driver và Customer được thông báo.
+
+# B10. Xác định Business Rules
+
+## BR01 – Điều kiện tìm tài xế
+
+- Chỉ tìm các tài xế đang ở trạng thái sẵn sàng nhận chuyến.
+- Hệ thống phải dựa trên vị trí của tài xế để tìm kiếm.
+- Hệ thống phải xét các tiêu chí phù hợp theo yêu cầu vận hành.
+
+## BR02 – Quy tắc ưu tiên tài xế
+
+- Ưu tiên tài xế phù hợp với yêu cầu chuyến.
+- Ưu tiên tài xế gần vị trí đón khách.
+
+## BR03 – Quy tắc gửi yêu cầu chuyến
+
+- Hệ thống gửi yêu cầu chuyến cho tài xế được lựa chọn.
+- Tài xế có quyền chấp nhận hoặc từ chối chuyến.
+
+## BR04 – Quy tắc khi tài xế từ chối
+
+- Nếu tài xế từ chối, hệ thống phải tiếp tục tìm tài xế khác.
+- Khách hàng không cần tạo lại yêu cầu đặt xe.
+
+## BR05 – Quy tắc khi tài xế không phản hồi
+
+- Nếu tài xế không phản hồi trong thời gian quy định, hệ thống phải tiếp tục tìm tài xế khác.
+- Thời gian phản hồi cụ thể cần được khách hàng xác nhận.
+
+## BR06 – Quy tắc khi không tìm được tài xế
+
+- Nếu không tìm được tài xế phù hợp, hệ thống phải thông báo cho khách hàng.
+- Yêu cầu đặt xe không được tự động chuyển sang tài xế không phù hợp.
+
+## BR07 – Quy tắc trạng thái chuyến
+
+- Tài xế phải cập nhật trạng thái chuyến theo từng giai đoạn.
+- Trạng thái chuyến phải được cập nhật để khách hàng có thể theo dõi.
+
+## BR08 – Quy tắc thanh toán
+
+- Hệ thống hỗ trợ thanh toán bằng tiền mặt.
+- Hệ thống hỗ trợ thanh toán điện tử.
+- Thanh toán điện tử phải được thực hiện thông qua nhà cung cấp thanh toán bên ngoài.
+- Không lưu trực tiếp thông tin nhạy cảm của thẻ hoặc tài khoản thanh toán.
+
+## BR09 – Quy tắc phân quyền
+
+- Khách hàng, tài xế và nhân viên vận hành phải có quyền sử dụng phù hợp với vai trò.
+- Các chức năng quản trị phải được kiểm soát quyền truy cập.
+
+## BR10 – Các Business Rules chưa được xác định
+
+- Cách tính cước cụ thể.
+- Tiêu chí ưu tiên tài xế cụ thể.
+- Thời gian tài xế phải phản hồi.
+- Chính sách hủy chuyến.
+- Cách xử lý khi mất kết nối mạng.
+- Thời gian lưu trữ dữ liệu.
+
+# B11. Xác định Activity Flow
+
+## 1. Quy trình đặt xe và tự động tìm tài xế
+
+**Customer**
+
+→ Đăng nhập hệ thống
+
+→ Nhập điểm đón và điểm đến
+
+→ Chọn loại xe
+
+→ Gửi yêu cầu đặt xe
+
+**System**
+
+→ Tiếp nhận yêu cầu
+
+→ Kiểm tra tài xế phù hợp
+
+→ Kiểm tra vị trí và trạng thái sẵn sàng của tài xế
+
+→ Chọn tài xế phù hợp và gần khách hàng
+
+→ Gửi yêu cầu chuyến cho Driver
+
+**Driver**
+
+→ Nhận yêu cầu chuyến
+
+→ Chấp nhận / Từ chối
+
+### Nếu Driver chấp nhận
+
+→ System phân công chuyến
+
+→ Thông báo cho Customer
+
+→ Driver đến điểm đón
+
+→ Đón Customer
+
+→ Thực hiện chuyến
+
+→ Hoàn thành chuyến
+
+### Nếu Driver từ chối hoặc không phản hồi
+
+→ System tiếp tục tìm Driver khác
+
+→ Gửi yêu cầu cho Driver tiếp theo
+
+→ Lặp lại quá trình tìm tài xế
+
+### Nếu không tìm được Driver
+
+→ System thông báo cho Customer
+
+→ Kết thúc yêu cầu đặt xe
+
+## 2. Luồng tổng quát
+
+```text
+[Customer gửi yêu cầu đặt xe]
+              ↓
+      [System tiếp nhận]
+              ↓
+    [Tìm tài xế phù hợp]
+              ↓
+ [Kiểm tra vị trí + trạng thái]
+              ↓
+      [Chọn Driver phù hợp]
+              ↓
+       [Gửi yêu cầu chuyến]
+              ↓
+       ┌──────┴──────┐
+       ↓             ↓
+ [Chấp nhận]   [Từ chối/Không phản hồi]
+       ↓             ↓
+ [Phân công]   [Tìm Driver khác]
+       ↓             ↓
+ [Thông báo] ←───────┘
+       ↓
+ [Thực hiện chuyến]
+       ↓
+ [Hoàn thành chuyến]
+```
+# B12. Xác định Traceability giữa Business Goal và Functional Requirement
+
+## 1. Mục đích
+
+Liên kết các **Business Goal (BG)** với các **Functional Requirement (FR)** tương ứng để đảm bảo mỗi mục tiêu kinh doanh đều được hỗ trợ bởi các chức năng của hệ thống.
+
+## 2. Ma trận Traceability
+
+| Business Goal | Functional Requirement liên quan |
+|---|---|
+| **BG01 – Tự động hóa việc tìm và phân công tài xế** | FR08, FR12, FR15 |
+| **BG02 – Giảm thời gian tìm tài xế** | FR08, FR09, FR10, FR11 |
+| **BG03 – Tìm đúng tài xế phù hợp** | FR09, FR10, FR11 |
+| **BG04 – Ưu tiên tài xế gần khách hàng** | FR09, FR11 |
+| **BG05 – Duy trì quá trình tìm tài xế** | FR13 |
+| **BG06 – Giảm phụ thuộc vào nhân viên vận hành** | FR08, FR12, FR13 |
+| **BG07 – Cải thiện trải nghiệm khách hàng** | FR07, FR14, FR17, FR18 |
+| **BG08 – Thông báo khi không tìm được tài xế** | FR14 |
+| **BG09 – Hỗ trợ mở rộng quy mô phục vụ** | FR08, FR09, FR10, FR11, FR13 |
+
+## 3. Traceability trọng tâm – Chức năng tự động tìm tài xế
+
+**BG01**  
+→ FR08: Tự động tìm tài xế  
+→ FR12: Gửi yêu cầu chuyến đến tài xế  
+
+**BG02**  
+→ FR08: Tự động tìm tài xế  
+→ FR09: Xác định tài xế dựa trên vị trí  
+→ FR10: Kiểm tra trạng thái sẵn sàng  
+→ FR11: Ưu tiên tài xế phù hợp và gần khách hàng  
+
+**BG03**  
+→ FR09: Xác định tài xế dựa trên vị trí  
+→ FR10: Kiểm tra trạng thái sẵn sàng  
+→ FR11: Ưu tiên tài xế phù hợp  
+
+**BG04**  
+→ FR09: Xác định vị trí tài xế  
+→ FR11: Ưu tiên tài xế gần khách hàng  
+
+**BG05**  
+→ FR13: Tiếp tục tìm tài xế khác khi tài xế từ chối hoặc không phản hồi  
+
+**BG06**  
+→ FR08: Tự động tìm tài xế  
+→ FR12: Gửi yêu cầu chuyến  
+→ FR13: Tự động tìm tài xế khác  
+
+**BG07**  
+→ FR07: Theo dõi trạng thái yêu cầu  
+→ FR17: Theo dõi trạng thái chuyến  
+→ FR18: Hiển thị thời gian dự kiến tài xế đến  
+
+**BG08**  
+→ FR14: Thông báo khi không tìm được tài xế  
+
+**BG09**  
+→ FR08: Tự động tìm tài xế  
+→ FR13: Tiếp tục tìm tài xế khác  
+
+# B13. Xác định Acceptance Criteria
+
+## AC01 – Đặt xe
+
+- Customer có thể nhập điểm đón và điểm đến.
+- Customer có thể chọn loại xe.
+- Customer có thể gửi yêu cầu đặt xe.
+- Hệ thống phải tiếp nhận và tạo yêu cầu đặt xe.
+
+## AC02 – Tự động tìm tài xế
+
+- Hệ thống tự động tìm tài xế sau khi nhận yêu cầu đặt xe.
+- Hệ thống chỉ xem xét tài xế đang sẵn sàng nhận chuyến.
+- Hệ thống phải xét vị trí của tài xế.
+- Hệ thống phải ưu tiên tài xế phù hợp và gần khách hàng.
+
+## AC03 – Phân công tài xế
+
+- Hệ thống gửi yêu cầu chuyến đến tài xế được lựa chọn.
+- Tài xế có thể chấp nhận hoặc từ chối chuyến.
+- Khi tài xế chấp nhận, hệ thống phải xác nhận việc phân công.
+- Customer phải được thông báo khi tài xế nhận chuyến.
+
+## AC04 – Tài xế từ chối hoặc không phản hồi
+
+- Khi tài xế từ chối, hệ thống phải tiếp tục tìm tài xế khác.
+- Khi tài xế không phản hồi, hệ thống phải tiếp tục tìm tài xế khác.
+- Customer không cần tạo lại yêu cầu đặt xe.
+
+## AC05 – Không tìm được tài xế
+
+- Nếu không tìm được tài xế phù hợp, hệ thống phải thông báo cho Customer.
+- Hệ thống không được để Customer chờ mà không có thông báo kết quả.
+
+## AC06 – Theo dõi chuyến đi
+
+- Customer có thể theo dõi trạng thái chuyến.
+- Customer có thể biết tài xế đã nhận chuyến.
+- Customer có thể xem thời gian dự kiến tài xế đến.
+- Driver có thể cập nhật trạng thái chuyến.
+- Hệ thống cập nhật trạng thái khi chuyến hoàn thành.
+
+## AC07 – Thanh toán
+
+- Hệ thống tính được số tiền Customer phải trả.
+- Customer có thể thanh toán bằng tiền mặt.
+- Customer có thể thanh toán điện tử.
+- Hệ thống nhận và hiển thị kết quả giao dịch.
+- Khi thanh toán điện tử thất bại, hệ thống phải thông báo cho Customer.
+
+## AC08 – Quản lý vận hành
+
+- Operation Staff có thể quản lý Customer.
+- Operation Staff có thể quản lý Driver.
+- Operation Staff có thể quản lý phương tiện.
+- Operation Staff có thể quản lý chuyến đi.
+- Operation Staff có thể theo dõi chuyến đang diễn ra.
+- Operation Staff có thể xử lý các chuyến bị lỗi.
+
+## AC09 – Bảo mật và phân quyền
+
+- Customer và Driver phải được xác thực.
+- Chức năng quản trị phải được kiểm soát quyền truy cập.
+- Thông tin cá nhân, vị trí và dữ liệu giao dịch phải được bảo vệ.
+- Hệ thống không lưu trực tiếp thông tin nhạy cảm của thẻ hoặc tài khoản thanh toán.
+
+
+# B14. Tổng hợp và kiểm tra yêu cầu
+
+## 1. Kiểm tra phạm vi
+
+- Các chức năng trong MVP phải nằm trong phạm vi đã xác định ở B4.
+- Không đưa các yêu cầu chưa được khách hàng chốt vào phạm vi chính thức.
+- Các yêu cầu về tính cước, ưu tiên tài xế, thời gian phản hồi, hủy chuyến, mất kết nối và lưu trữ dữ liệu cần được khách hàng xác nhận.
+
+## 2. Kiểm tra tính đầy đủ
+
+- Đảm bảo quy trình chính được hỗ trợ đầy đủ:
+  **Đặt xe → Tìm tài xế → Phân công tài xế → Thực hiện chuyến → Tính cước → Thanh toán → Thông báo → Đánh giá**
+- Đảm bảo Customer có các chức năng cần thiết để đặt và theo dõi chuyến.
+- Đảm bảo Driver có các chức năng cần thiết để nhận và thực hiện chuyến.
+- Đảm bảo Operation Staff có chức năng quản lý và xử lý sự cố.
+- Đảm bảo hệ thống có chức năng thanh toán, thông báo và báo cáo.
+
+## 3. Kiểm tra yêu cầu tự động tìm tài xế
+
+- Hệ thống phải tự động tìm tài xế phù hợp.
+- Phải xét vị trí và trạng thái sẵn sàng của tài xế.
+- Phải ưu tiên tài xế phù hợp và gần khách hàng.
+- Nếu tài xế từ chối hoặc không phản hồi, hệ thống phải tiếp tục tìm tài xế khác.
+- Customer không phải tạo lại yêu cầu.
+- Nếu không tìm được tài xế, hệ thống phải thông báo cho Customer.
+
+## 4. Kiểm tra tính nhất quán
+
+- Business Goal phải được liên kết với Business Requirement.
+- Business Requirement phải được chuyển thành Functional Requirement.
+- Functional Requirement phải có Use Case tương ứng.
+- Use Case phải có luồng xử lý phù hợp.
+- Các yêu cầu phải phù hợp với phạm vi MVP.
+
+## 5. Kết quả
+
+- **Yêu cầu đã xác định:** Các chức năng và yêu cầu phi chức năng trong phạm vi MVP.
+- **Yêu cầu cần xác nhận:** Cách tính cước, tiêu chí ưu tiên tài xế, thời gian phản hồi, chính sách hủy chuyến, xử lý mất kết nối và thời gian lưu trữ dữ liệu.
+- **Yêu cầu ngoài MVP:** Các chức năng chưa được khách hàng yêu cầu hoặc chưa có cơ sở để triển khai.
+
+
